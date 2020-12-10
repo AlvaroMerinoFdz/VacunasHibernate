@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 10-dic-2020 12:37:10 by Hibernate Tools 5.4.21.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class dynamic-insert="false" dynamic-update="false" mutable="true" name="practica2020.Vacuna" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="VACUNA">
+        <id name="codTipo" type="char">
+            <column length="1" name="COD_TIPO"/>
+            <generator class="assigned"/>
+        </id>
+        <property generated="never" lazy="false" name="denoTipo" optimistic-lock="true" type="string" unique="false">
+            <column length="20" name="DENO_TIPO" unique="true"/>
+        </property>
+        <property generated="never" lazy="false" name="laboratorio" optimistic-lock="true" type="string" unique="false">
+            <column length="20" name="LABORATORIO"/>
+        </property>
+        <property generated="never" lazy="false" name="pais" optimistic-lock="true" type="string" unique="false">
+            <column length="2" name="PAIS"/>
+        </property>
+        <set embed-xml="true" fetch="select" inverse="true" lazy="true" mutable="true" name="voluntarioses" optimistic-lock="true" sort="unsorted" table="VOLUNTARIOS">
+            <key on-delete="noaction">
+                <column length="1" name="TIPO" not-null="true"/>
+            </key>
+            <one-to-many class="practica2020.Voluntarios" embed-xml="true" not-found="exception"/>
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generated 10-dic-2020 12:37:10 by Hibernate Tools 5.4.21.Final --><!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true" default-access="property" default-cascade="none" default-lazy="true">
+    <class dynamic-insert="false" dynamic-update="false" mutable="true" name="practica2020.Voluntarios" optimistic-lock="version" polymorphism="implicit" select-before-update="false" table="VOLUNTARIOS">
+        <composite-id class="practica2020.VoluntariosId" mapped="false" name="id" unsaved-value="undefined">
+            <key-property name="codVolun" type="int">
+                <column name="COD_VOLUN" precision="5" scale="0"/>
+            </key-property>
+            <key-property name="tipo" type="char">
+                <column length="1" name="TIPO"/>
+            </key-property>
+        </composite-id>
+        <many-to-one class="practica2020.Vacuna" embed-xml="true" fetch="select" insert="false" name="vacuna" not-found="exception" optimistic-lock="true" unique="false" update="false">
+            <column length="1" name="TIPO" not-null="true"/>
+        </many-to-one>
+        <property generated="never" lazy="false" name="nya" optimistic-lock="true" type="string" unique="false">
+            <column length="40" name="NYA"/>
+        </property>
+        <property generated="never" lazy="false" name="edad" optimistic-lock="true" type="java.lang.Byte" unique="false">
+            <column name="EDAD" precision="2" scale="0"/>
+        </property>
+        <property generated="never" lazy="false" name="grupo" optimistic-lock="true" type="string" unique="false">
+            <column length="3" name="GRUPO"/>
+        </property>
+        <property generated="never" lazy="false" name="pais" optimistic-lock="true" type="string" unique="false">
+            <column length="2" name="PAIS"/>
+        </property>
+    </class>
+</hibernate-mapping>
