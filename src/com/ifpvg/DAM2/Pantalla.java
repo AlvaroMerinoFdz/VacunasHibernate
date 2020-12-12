@@ -107,7 +107,7 @@ public class Pantalla {
 			void visualizarPaciente(char dep) {
 				SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
 				Session session = sesion.openSession();
-				Query q = session.createQuery(" from Voluntarios e where e.vacuna.codTipo = ?").setCharacter(0, dep);
+				Query q = session.createQuery(" from Voluntarios v where v.vacuna.codTipo = ?").setCharacter(0, dep);
 				Voluntarios emple = new Voluntarios();
 				List<Voluntarios> lista = q.list();
 				
