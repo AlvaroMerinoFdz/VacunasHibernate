@@ -8,7 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.transaction.SystemException;
 
-
+import org.hibernate.ObjectNotFoundException;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
@@ -62,7 +63,7 @@ public class frmPractica2020 extends JFrame {
 		panel.setLayout(null);
 		
 		JLabel lblGestinDeVacunas = new JLabel("Gesti\u00F3n de Vacunas");
-		lblGestinDeVacunas.setBounds(137, 11, 94, 14);
+		lblGestinDeVacunas.setBounds(151, 11, 190, 14);
 		panel.add(lblGestinDeVacunas);
 		
 		JLabel lblLimpiar = new JLabel("");
@@ -124,39 +125,102 @@ public class frmPractica2020 extends JFrame {
 				
 				Vacuna depart =  (Vacuna) session.createQuery("From Vacuna as de "+
 				"where de.codTipo = ?").setCharacter(0,codtipo).uniqueResult();
-				if (depart!=null) {
-					lblLimpiar.setText(" VACUNA EXISTENTE - NO SE PUEDE DAR DE ALTA");
-					tx.rollback();		
-				}else{
+				if(depart !=null) {
+					lblLimpiar.setText("Vacuna existente, por tanto no se puede dar de alta");
+					tx.rollback();
+				}else {
 					Vacuna d = new Vacuna();
-					d.setCodTipo(codtipo);
-					if(deno_tipo.length()<15) {
-						d.setDenoTipo(deno_tipo);
-					}
-					if(laboratorio.length()<15) {
-						d.setLaboratorio(laboratorio);
-					}
-					if(pais.length()<15) {
-						d.setPais(pais);
-					}
+					if(deno_tipo.length()>15) deno_tipo.substring(0,15);
+					d.setDenoTipo(deno_tipo);
+					if(laboratorio.length()>15) laboratorio.substring(0, 15);
+					d.setLaboratorio(laboratorio);
+					if(pais.length()>15) pais.substring(0,15);
+					d.setPais(pais);
+					session.save(d);//modificamos el objeto
 					tx.commit();
-					lblLimpiar.setText("Vacuna insertada...");	
+					lblLimpiar.setText("Vacuna insertada correctamente");
 				}
 				session.close();
-			}
+			}//fin insertar vacuna
 		});
 				btnAlta.setBounds(10, 192, 89, 23);
 				panel.add(btnAlta);
 				
 				JButton btnBaja = new JButton("Baja");
+				btnBaja.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						bajaVacuna(txtCod_tipo.getText().charAt(0));
+					}
+					void bajaVacuna(char codtipo) {
+						SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
+						Session session = sesion.openSession();
+						Transaction tx =  session.beginTransaction();
+						Vacuna de = new Vacuna();
+						de = (Vacuna) session.load(Vacuna.class, (char) codtipo);
+						try {
+							//COMPROBAMOS SI TIENE PACIENTES
+							Query cons = session.createQuery("select count(em.empNo)from Empleados as em where em.deptNo=?").setCharacter(0, codtipo);
+							Long numemp = (Long) cons.uniqueResult();
+							if (numemp==0) { //no tiene pacientes
+								session.delete(de);//eliminamos el objeto
+								tx.commit();
+								lblLimpiar.setText("Vacuna eliminada correctamente");
+							}else {//tiene pacientes asignados
+								lblLimpiar.setText("NO SE PUEDE ELIMINAR TIENE "+numemp+" pacientes asignados...");
+								tx.rollback();
+							}
+						}catch( ObjectNotFoundException t) {
+							lblLimpiar.setText("Vacuna no existente, no se puede eliminar");
+							tx.rollback();
+						}
+						session.close();
+					}//fin bajaVacuna
+				});
 				btnBaja.setBounds(96, 192, 89, 23);
 				panel.add(btnBaja);
 				
-				JButton btnMoficacion = new JButton("Moficacion");
-				btnMoficacion.setBounds(187, 192, 122, 23);
-				panel.add(btnMoficacion);
+				JButton btnModificar = new JButton("Modificar");
+				btnModificar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						modificarVacuna(txtCod_tipo.getText().charAt(0), txtNombre.getText(), txtPais.getText(), txtDeno_tipo.getText());
+					}
+					private void modificarVacuna(char codtipo, String deno_tipo, String laboratorio, String pais) {
+						SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
+						Session session = sesion.openSession();
+						Transaction tx = session.beginTransaction();
+						
+						Vacuna de = new Vacuna();
+						de = (Vacuna) session.load(Vacuna.class, codtipo);
+						try {
+							if(deno_tipo.length()>15) deno_tipo.substring(0,15);
+							de.setDenoTipo(deno_tipo);
+							if(laboratorio.length()>15) laboratorio.substring(0, 15);
+							de.setLaboratorio(laboratorio);
+							if(pais.length()>15) pais.substring(0,15);
+							de.setPais(pais);
+							session.update(de);//modificamos el objeto
+							tx.commit();
+							lblLimpiar.setText("Vacuna modificada correctamente");
+						}catch( ObjectNotFoundException t) {
+							lblLimpiar.setText("Vacuna no existente, no se puede eliminar");
+							tx.rollback();
+						}
+						session.close();
+					}
+				});
+				btnModificar.setBounds(187, 192, 122, 23);
+				panel.add(btnModificar);
 				
 				JButton btnLimpiar = new JButton("Limpiar");
+				btnLimpiar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						txtCod_tipo.setText("");
+						txtNombre.setText("");
+						txtPais.setText("");
+						txtDeno_tipo.setText("");
+						
+					}
+				});
 				btnLimpiar.setBounds(304, 192, 89, 23);
 				panel.add(btnLimpiar);
 	}
