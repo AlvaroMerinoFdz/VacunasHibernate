@@ -43,7 +43,7 @@ public class Ejercicio4 extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					frmPractica2020 frame = new frmPractica2020();
+					Ejercicio4 frame = new Ejercicio4();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

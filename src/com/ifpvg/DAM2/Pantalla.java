@@ -59,9 +59,9 @@ public class Pantalla {
 		frame.getContentPane().add(depar);
 		depar.setColumns(10);
 		
-		JLabel label = new JLabel("Introduce n\u00BA de vacuna: ");
-		label.setBounds(34, 21, 168, 14);
-		frame.getContentPane().add(label);
+		JLabel lblIntroduceElCodigo = new JLabel("Introduce el codigo de la vacuna");
+		lblIntroduceElCodigo.setBounds(34, 21, 168, 14);
+		frame.getContentPane().add(lblIntroduceElCodigo);
 		
 		JLabel etiqueta = new JLabel("");
 		etiqueta.setBounds(34, 46, 260, 29);

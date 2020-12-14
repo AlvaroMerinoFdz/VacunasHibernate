@@ -198,22 +198,21 @@ public class frmPractica2020 extends JFrame {
 					private void modificarVacuna(char codtipo, String deno_tipo, String laboratorio, String pais) {
 						SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
 						Session session = sesion.openSession();
-						Transaction tx = session.beginTransaction();
-						
-						Vacuna vacuna = new Vacuna();
-						vacuna = (Vacuna) session.load(Vacuna.class, codtipo);
+						Transaction tx =  session.beginTransaction();
+						Vacuna de = new Vacuna();
+						de = (Vacuna) session.load(Vacuna.class, (char) codtipo);
 						try {
 							if(deno_tipo.length()>15) deno_tipo.substring(0,15);
-							vacuna.setDenoTipo(deno_tipo);
+							de.setDenoTipo(deno_tipo);
 							if(laboratorio.length()>15) laboratorio.substring(0, 15);
-							vacuna.setLaboratorio(laboratorio);
+							de.setLaboratorio(laboratorio);
 							if(pais.length()>15) pais.substring(0,15);
-							vacuna.setPais(pais);
-							session.update(vacuna);//modificamos el objeto
+							de.setPais(pais);
+							session.update(de);//modificamos el objeto
 							tx.commit();
 							lblLimpiar.setText("Vacuna modificada correctamente");
 						}catch( ObjectNotFoundException t) {
-							lblLimpiar.setText("Vacuna no existente, no se puede eliminar");
+							lblLimpiar.setText("Vacuna no existente, no se puede modificar");
 							tx.rollback();
 						}
 						session.close();

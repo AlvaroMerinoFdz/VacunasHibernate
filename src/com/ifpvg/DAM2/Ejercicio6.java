@@ -115,19 +115,19 @@ public class Ejercicio6 {
 				Transaction tx =  session.beginTransaction();
 				try {
 					//COMPROBAMOS SI TIENE PACIENTES
-					//Query vacuna = session.createQuery("select voluntario.vacuna from Voluntarios as voluntario where voluntario.id=?").setCharacter(0, id);
+					Query vacuna = session.createQuery("select voluntario.vacuna from Voluntarios as voluntario where voluntario.id=?").setCharacter(0, id);
 					Query nombre = session.createQuery("select voluntario.nya from Voluntarios as voluntario where voluntario.id=?").setCharacter(0, id);
-					/*Query pais = session.createQuery("select vacuna.pais from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, id);
-					Query grupo = session.createQuery("select vacuna.pais from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, id);*/
+					Query pais = session.createQuery("select vacuna.pais from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, id);
+					Query grupo = session.createQuery("select vacuna.pais from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, id);
 					tx.commit();
-					/*if(vacuna.uniqueResult().equals(null)) {
+					if(vacuna.uniqueResult().equals(null)) {
 						lblLimpiar.setText("Voluntario no existente");
-					}else {*/
-						//lblVacuna.setText(""+vacuna.uniqueResult());
+					}else {
+						lblVacuna.setText(""+vacuna.uniqueResult());
 						lblNombre.setText(""+nombre.uniqueResult());
-						/*lblGrup.setText(""+grupo.uniqueResult());
-						lblPai.setText(""+pais.uniqueResult());*/
-				//	}
+						lblGrup.setText(""+grupo.uniqueResult());
+						lblPai.setText(""+pais.uniqueResult());
+					}
 					
 				}catch( NullPointerException t) {
 					lblLimpiar.setText("Paciente no existente");
