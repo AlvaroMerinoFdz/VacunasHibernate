@@ -12,6 +12,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.TransactionException;
 import org.hibernate.classic.Session;
 
 import practica2020.SessionFactoryUtil;
@@ -23,8 +24,12 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class frmPractica2020 extends JFrame {
+public class Ejercicio4 extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtCod_tipo;
 	private JTextField txtNombre;
@@ -50,7 +55,7 @@ public class frmPractica2020 extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public frmPractica2020() {
+	public Ejercicio4() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -93,16 +98,16 @@ public class frmPractica2020 extends JFrame {
 		
 		txtNombre = new JTextField();
 		txtNombre.setColumns(10);
-		txtNombre.setBounds(160, 130, 86, 20);
+		txtNombre.setBounds(160, 130, 170, 20);
 		panel.add(txtNombre);
 		
 		txtPais = new JTextField();
 		txtPais.setColumns(10);
-		txtPais.setBounds(160, 161, 86, 20);
+		txtPais.setBounds(160, 161, 170, 20);
 		panel.add(txtPais);
 		
 		txtDeno_tipo = new JTextField();
-		txtDeno_tipo.setBounds(160, 83, 86, 20);
+		txtDeno_tipo.setBounds(160, 83, 170, 20);
 		panel.add(txtDeno_tipo);
 		txtDeno_tipo.setColumns(10);
 		
@@ -111,7 +116,6 @@ public class frmPractica2020 extends JFrame {
 			//
 			public void actionPerformed(ActionEvent e) {
 				try {
-					
 					InsertarVacuna(txtCod_tipo.getText().charAt(0), txtNombre.getText(), txtPais.getText(), txtDeno_tipo.getText());
 				} catch (IllegalStateException | SystemException e1) {
 					e1.printStackTrace();
@@ -176,7 +180,7 @@ public class frmPractica2020 extends JFrame {
 								lblLimpiar.setText("NO SE PUEDE ELIMINAR TIENE "+numVoluntarios+" pacientes asignados...");
 								tx.rollback();
 							}
-						}catch( ObjectNotFoundException t) {
+						}catch( NullPointerException t) {
 							lblLimpiar.setText("Vacuna no existente, no se puede eliminar");
 							tx.rollback();
 						}
@@ -190,10 +194,11 @@ public class frmPractica2020 extends JFrame {
 				btnModificar.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							modificarVacuna(txtCod_tipo.getText().charAt(0), txtNombre.getText(), txtPais.getText(), txtDeno_tipo.getText());	
+							modificarVacuna(txtCod_tipo.getText().charAt(0), txtNombre.getText(), txtPais.getText(), txtDeno_tipo.getText());
 						}catch(StringIndexOutOfBoundsException s) {
 							lblLimpiar.setText("Introduzca un valor válido");
 						}
+						
 					}
 					private void modificarVacuna(char codtipo, String deno_tipo, String laboratorio, String pais) {
 						SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
@@ -234,5 +239,43 @@ public class frmPractica2020 extends JFrame {
 				});
 				btnLimpiar.setBounds(304, 192, 89, 23);
 				panel.add(btnLimpiar);
+				
+				JButton btnConsultar = new JButton("Consultar");
+				btnConsultar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							atributos(txtCod_tipo.getText().charAt(0));
+						}catch(StringIndexOutOfBoundsException s) {
+							lblLimpiar.setText("Introduzca un valor válido");
+						}
+						
+					}
+					private void atributos (char codtipo) {
+						SessionFactory sesion = SessionFactoryUtil.getSessionFactory();
+						Session session = sesion.openSession();
+						Transaction tx =  session.beginTransaction();
+						try {
+							//COMPROBAMOS SI TIENE PACIENTES
+							Query denominacion = session.createQuery("select vacuna.denoTipo from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, codtipo);
+							Query laboratorio = session.createQuery("select vacuna.laboratorio from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, codtipo);
+							Query pais = session.createQuery("select vacuna.pais from Vacuna as vacuna where vacuna.codTipo=?").setCharacter(0, codtipo);
+							tx.commit();
+							if(denominacion.uniqueResult().equals(null)) {
+								lblLimpiar.setText("Vacuna no existente");
+							}else {
+								txtDeno_tipo.setText(""+denominacion.uniqueResult());
+								txtNombre.setText(""+laboratorio.uniqueResult());
+								txtPais.setText(""+pais.uniqueResult());
+							}
+							
+						}catch( NullPointerException t) {
+							lblLimpiar.setText("Vacuna no existente");
+							//tx.rollback();
+						}
+						session.close();	
+					}
+				});
+				btnConsultar.setBounds(267, 36, 126, 23);
+				panel.add(btnConsultar);
 	}
 }
