@@ -130,11 +130,10 @@ public class Ejercicio6 {
 				//	}
 					
 				}catch( NullPointerException t) {
-					lblLimpiar.setText("Vacuna no existente");
+					lblLimpiar.setText("Paciente no existente");
 					//tx.rollback();
 				}
 				session.close();
-				
 			}
 		});
 		btnConsultar.setBounds(14, 227, 147, 23);
